@@ -72,7 +72,65 @@
           <th>作業</th>
           <th>時間(h)</th>
           <th>天気</th>
-          <th>メモ</th>
+          <th>メモ</th><!-- 略：headなどはそのままにしてください -->
+
+<table id="diaryTable">
+  <thead>
+    <tr>
+      <th>日付</th>
+      <th>作物</th>
+      <th>作業</th>
+      <th>時間(h)</th>
+      <th>天気</th>
+      <th>メモ</th>
+      <th>操作</th> <!-- 👈 削除列を追加 -->
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<script>
+  const data = JSON.parse(localStorage.getItem("farmDiary") || "[]");
+  const tbody = document.querySelector("#diaryTable tbody");
+
+  // 新しい順に並び替え
+  data.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  if (data.length === 0) {
+    const row = document.createElement("tr");
+    const cell = document.createElement("td");
+    cell.colSpan = 7;
+    cell.textContent = "記録がありません。";
+    row.appendChild(cell);
+    tbody.appendChild(row);
+  } else {
+    data.forEach((entry, index) => {
+      const row = document.createElement("tr");
+
+      row.innerHTML = `
+        <td>${entry.date}</td>
+        <td>${entry.crop}</td>
+        <td>${entry.task}</td>
+        <td>${entry.time}</td>
+        <td>${entry.weather}</td>
+        <td>${entry.memo}</td>
+        <td><button onclick="deleteEntry(${index})">削除</button></td>
+      `;
+
+      tbody.appendChild(row);
+    });
+  }
+
+  function deleteEntry(index) {
+    if (confirm("この記録を削除しますか？")) {
+      const data = JSON.parse(localStorage.getItem("farmDiary") || "[]");
+      data.splice(index, 1);
+      localStorage.setItem("farmDiary", JSON.stringify(data));
+      location.reload(); // ページをリロードして再表示
+    }
+  }
+</script>
+
         </tr>
       </thead>
       <tbody></tbody>
