@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>作業日誌一覧 - はまちゃん農園</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .container {
+      max-width: 800px;
+      margin: auto;
+      padding: 1rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.5rem;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f0f0f0;
+    }
+
+    @media (max-width: 600px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      th {
+        display: none;
+      }
+
+      td {
+        position: relative;
+        padding-left: 50%;
+        border: none;
+        border-bottom: 1px solid #ccc;
+      }
+
+      td::before {
+        position: absolute;
+        left: 0.5rem;
+        top: 0.5rem;
+        font-weight: bold;
+        white-space: nowrap;
+      }
+
+      td:nth-of-type(1)::before { content: "日付"; }
+      td:nth-of-type(2)::before { content: "作物"; }
+      td:nth-of-type(3)::before { content: "作業"; }
+      td:nth-of-type(4)::before { content: "時間(h)"; }
+      td:nth-of-type(5)::before { content: "天気"; }
+      td:nth-of-type(6)::before { content: "メモ"; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>作業日誌一覧</h1>
+    <table id="diaryTable">
+      <thead>
+        <tr>
+          <th>日付</th>
+          <th>作物</th>
+          <th>作業</th>
+          <th>時間(h)</th>
+          <th>天気</th>
+          <th>メモ</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    const data = JSON.parse(localStorage.getItem("farmDiary") || "[]");
+
+    // 最新のデータが上に来るように並び替え
+    data.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    const tbody = document.querySelector("#diaryTable tbody");
+
+    if (data.length === 0) {
+      const row = document.createElement("tr");
+      const cell = document.createElement("td");
+      cell.colSpan = 6;
+      cell.textContent = "記録がありません。";
+      row.appendChild(cell);
+      tbody.appendChild(row);
+    } else {
+      data.forEach(entry => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${entry.date}</td>
+          <td>${entry.crop}</td>
+          <td>${entry.task}</td>
+          <td>${entry.time}</td>
+          <td>${entry.weather}</td>
+          <td>${entry.memo}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+  </script>
+</body>
+</html>
